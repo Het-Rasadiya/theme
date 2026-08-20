@@ -99,9 +99,9 @@
                   </p>
                 {%- when 'title' -%}
                   <div class="product__title" {{ block.shopify_attributes }}>
-                    <h1>{{ product.title | escape }}</h1>
+                    <h1 class="{{ block.settings.heading_size | default: 'h1' }}">{{ product.title | escape }}</h1>
                     <a href="{{ product.url }}" class="product__title">
-                      <h2 class="h1">
+                      <h2 class="{{ block.settings.heading_size | default: 'h1' }}">
                         {{ product.title | escape }}
                       </h2>
                     </a>
@@ -797,7 +797,33 @@
     {
       "type": "title",
       "name": "t:sections.main-product.blocks.title.name",
-      "limit": 1
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "heading_size",
+          "options": [
+            {
+              "value": "h2",
+              "label": "t:sections.all.heading_size.options__1.label"
+            },
+            {
+              "value": "h1",
+              "label": "t:sections.all.heading_size.options__2.label"
+            },
+            {
+              "value": "h0",
+              "label": "t:sections.all.heading_size.options__3.label"
+            },
+            {
+              "value": "hxl",
+              "label": "Extra Large"
+            }
+          ],
+          "default": "h1",
+          "label": "t:sections.all.heading_size.label"
+        }
+      ]
     },
     {
       "type": "price",
