@@ -37,3 +37,8 @@
     grid-column-gap: 2rem;
   }
 }
+
+/* Remove spacing/gap between page title section and contact form section */
+.shopify-section:has(.contact) {
+  margin-top: 0 !important;
+}
