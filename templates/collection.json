@@ -1,20 +1,58 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
-    "main-collection-banner": {
-      "type": "main-collection-banner",
+    "circle-menu": {
+      "type": "circle-menu",
+      "blocks": {
+        "walker": {
+          "type": "circle_item",
+          "settings": {
+            "label": "Walkers",
+            "link": "shopify://collections/walkers"
+          }
+        },
+        "furniture": {
+          "type": "circle_item",
+          "settings": {
+            "label": "Furniture",
+            "link": "shopify://collections/furniture"
+          }
+        },
+        "travel_bags": {
+          "type": "circle_item",
+          "settings": {
+            "label": "Travel Bags",
+            "link": "shopify://collections/travel-bags"
+          }
+        },
+        "bath_time": {
+          "type": "circle_item",
+          "settings": {
+            "label": "Bath Time",
+            "link": "shopify://collections/bath-time"
+          }
+        },
+        "mother_care": {
+          "type": "circle_item",
+          "settings": {
+            "label": "Mother Care",
+            "link": "shopify://collections/mother-care"
+          }
+        }
+      },
+      "block_order": [
+        "walker",
+        "furniture",
+        "travel_bags",
+        "bath_time",
+        "mother_care"
+      ],
       "settings": {
-        "show_collection_description": true,
-        "show_collection_image": false,
-        "color_scheme": "scheme-1"
+        "color_scheme": "scheme-1",
+        "circle_size": 120,
+        "gap": 20,
+        "alignment": "center",
+        "padding_top": 36,
+        "padding_bottom": 36
       }
     },
     "main-product-grid": {
@@ -39,7 +77,7 @@
     }
   },
   "order": [
-    "main-collection-banner",
+    "circle-menu",
     "main-product-grid"
   ]
 }
