@@ -1,0 +1,295 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  #shopify-section-{{ section.id }} {
+    --circle-size: {{ section.settings.circle_size }}px;
+    --circle-gap: {{ section.settings.gap }}px;
+    --circle-border-color: {% if section.settings.border_color != blank %}{{ section.settings.border_color }}{% else %}rgba(var(--color-foreground), 0.15){% endif %};
+    --circle-border-hover-color: {% if section.settings.border_hover_color != blank %}{{ section.settings.border_hover_color }}{% else %}rgb(var(--color-button)){% endif %};
+    --circle-text-color: {% if section.settings.text_color != blank %}{{ section.settings.text_color }}{% else %}rgb(var(--color-foreground)){% endif %};
+    --circle-alignment: {% if section.settings.alignment == 'left' %}flex-start{% elsif section.settings.alignment == 'right' %}flex-end{% else %}center{% endif %};
+  }
+
+  #shopify-section-{{ section.id }} .circle-menu-container {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+    justify-content: var(--circle-alignment);
+    gap: var(--circle-gap);
+    padding: 10px 0;
+  }
+
+  #shopify-section-{{ section.id }} .circle-menu-container::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome/Safari */
+  }
+
+  /* Fallback alignment for mobile scroll so it doesn't clip content */
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .circle-menu-container {
+      justify-content: flex-start;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .circle-menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    max-width: var(--circle-size);
+    transition: transform var(--duration-short) ease;
+  }
+
+  #shopify-section-{{ section.id }} .circle-menu-item:hover {
+    transform: translateY(-4px);
+  }
+
+  #shopify-section-{{ section.id }} .circle-menu-image-wrapper {
+    width: var(--circle-size);
+    height: var(--circle-size);
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--circle-border-color);
+    transition: border-color var(--duration-short) ease, box-shadow var(--duration-short) ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(var(--color-background));
+  }
+
+  #shopify-section-{{ section.id }} .circle-menu-item:hover .circle-menu-image-wrapper {
+    border-color: var(--circle-border-hover-color);
+    box-shadow: 0 4px 12px rgba(var(--color-shadow), 0.15);
+  }
+
+  #shopify-section-{{ section.id }} .circle-menu-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--duration-short) ease;
+  }
+
+  #shopify-section-{{ section.id }} .circle-menu-item:hover .circle-menu-image {
+    transform: scale(1.08);
+  }
+
+  #shopify-section-{{ section.id }} .circle-menu-label {
+    margin-top: 10px;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--circle-text-color);
+    text-align: center;
+    word-break: break-word;
+    line-height: 1.2;
+    transition: color var(--duration-short) ease;
+  }
+
+  #shopify-section-{{ section.id }} .circle-menu-item:hover .circle-menu-label {
+    color: var(--circle-border-hover-color);
+  }
+{%- endstyle -%}
+
+<div class="circle-menu-wrapper color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
+  <div class="page-width">
+    <div class="circle-menu-container">
+      {%- for block in section.blocks -%}
+        {%- if block.settings.image != blank or block.settings.label != blank -%}
+          <a href="{{ block.settings.link | default: '#' }}" class="circle-menu-item" {{ block.shopify_attributes }}>
+            <div class="circle-menu-image-wrapper">
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 300 | image_tag: 
+                  loading: 'lazy',
+                  class: 'circle-menu-image',
+                  alt: block.settings.label | escape
+                }}
+              {%- else -%}
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg circle-menu-image' }}
+              {%- endif -%}
+            </div>
+            {%- if block.settings.label != blank -%}
+              <span class="circle-menu-label">{{ block.settings.label | escape }}</span>
+            {%- endif -%}
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Category Circles",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "info": "Leave blank to use theme default border color"
+    },
+    {
+      "type": "color",
+      "id": "border_hover_color",
+      "label": "Border Hover & Label Hover Color",
+      "info": "Leave blank to use theme default primary button color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "info": "Leave blank to use theme default text color"
+    },
+    {
+      "type": "range",
+      "id": "circle_size",
+      "min": 60,
+      "max": 200,
+      "step": 5,
+      "unit": "px",
+      "label": "Circle Size (Diameter)",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Gap between items",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "circle_item",
+      "name": "Circle Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label text",
+          "default": "Category"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category Circles",
+      "blocks": [
+        {
+          "type": "circle_item",
+          "settings": {
+            "label": "Category 1"
+          }
+        },
+        {
+          "type": "circle_item",
+          "settings": {
+            "label": "Category 2"
+          }
+        },
+        {
+          "type": "circle_item",
+          "settings": {
+            "label": "Category 3"
+          }
+        },
+        {
+          "type": "circle_item",
+          "settings": {
+            "label": "Category 4"
+          }
+        },
+        {
+          "type": "circle_item",
+          "settings": {
+            "label": "Category 5"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
