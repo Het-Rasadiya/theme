@@ -1,0 +1,148 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .hero-banner {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .hero-banner__link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+  }
+
+  .hero-banner__media {
+    position: relative;
+    width: 100%;
+  }
+
+  .hero-banner__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+{%- endstyle -%}
+
+<div class="hero-banner section-{{ section.id }}-padding">
+  {%- if section.settings.link != blank -%}
+    <a href="{{ section.settings.link }}" class="hero-banner__link">
+  {%- endif -%}
+    
+    <div class="hero-banner__media">
+      {%- if section.settings.image_desktop != blank -%}
+        {%- if section.settings.image_mobile != blank -%}
+          <!-- Mobile image -->
+          <img
+            srcset="{{ section.settings.image_mobile | image_url: width: 375 }} 375w,
+                    {{ section.settings.image_mobile | image_url: width: 550 }} 550w,
+                    {{ section.settings.image_mobile | image_url: width: 750 }} 750w,
+                    {{ section.settings.image_mobile | image_url: width: 1100 }} 1100w"
+            src="{{ section.settings.image_mobile | image_url: width: 750 }}"
+            sizes="100vw"
+            alt="{{ section.settings.accessibility_info | default: section.settings.image_mobile.alt | escape }}"
+            class="hero-banner__image hero-banner__image--mobile medium-hide large-up-hide"
+            width="{{ section.settings.image_mobile.width }}"
+            height="{{ section.settings.image_mobile.height }}"
+            loading="lazy"
+          >
+        {%- endif -%}
+        
+        <!-- Desktop image -->
+        <img
+          srcset="{{ section.settings.image_desktop | image_url: width: 750 }} 750w,
+                  {{ section.settings.image_desktop | image_url: width: 1100 }} 1100w,
+                  {{ section.settings.image_desktop | image_url: width: 1500 }} 1500w,
+                  {{ section.settings.image_desktop | image_url: width: 1780 }} 1780w,
+                  {{ section.settings.image_desktop | image_url: width: 2000 }} 2000w,
+                  {{ section.settings.image_desktop | image_url: width: 3000 }} 3000w,
+                  {{ section.settings.image_desktop | image_url: width: 3840 }} 3840w"
+          src="{{ section.settings.image_desktop | image_url: width: 1500 }}"
+          sizes="100vw"
+          alt="{{ section.settings.accessibility_info | default: section.settings.image_desktop.alt | escape }}"
+          class="hero-banner__image hero-banner__image--desktop{% if section.settings.image_mobile != blank %} small-hide{% endif %}"
+          width="{{ section.settings.image_desktop.width }}"
+          height="{{ section.settings.image_desktop.height }}"
+          loading="lazy"
+        >
+      {%- else -%}
+        {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {%- endif -%}
+    </div>
+
+  {%- if section.settings.link != blank -%}
+    </a>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Hero Banner",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image_desktop",
+      "label": "Desktop Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile Image (Optional)"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Banner Link"
+    },
+    {
+      "type": "text",
+      "id": "accessibility_info",
+      "label": "Alt Text / Accessibility Label"
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner"
+    }
+  ]
+}
+{% endschema %}
