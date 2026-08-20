@@ -595,6 +595,16 @@
 }
 
 /* Card Product Variant Picker Styling */
+.quick-add,
+product-form,
+.quick-add form,
+card-product-variants,
+.card-product-variant-swatches-wrapper {
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+}
+
 card-product-variants {
   display: block;
   margin-top: 1.2rem;
@@ -625,9 +635,21 @@ card-product-variants {
 
 .card-product-swatches {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
   gap: 0.8rem;
   margin-top: 0.5rem;
+  padding: 0.4rem 0.4rem 0.6rem 0.4rem;
+  margin-left: -0.4rem;
+  margin-right: -0.4rem;
+  width: calc(100% + 0.8rem);
+  max-width: calc(100% + 0.8rem);
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
+  box-sizing: border-box;
+}
+
+.card-product-swatches::-webkit-scrollbar {
+  display: none; /* Hide scrollbar in Chrome/Safari/Edge */
 }
 
 .card-product-swatch {
@@ -643,6 +665,7 @@ card-product-variants {
   background-color: transparent;
   padding: 0;
   overflow: hidden;
+  flex-shrink: 0; /* Prevent swatches from shrinking */
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
 }
 
