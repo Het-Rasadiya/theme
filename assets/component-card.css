@@ -593,3 +593,38 @@
     clip-path: polygon(var(--shape--blob-5));
   }
 }
+
+/* Card Product Variant Picker Styling */
+card-product-variants {
+  display: block;
+  margin-top: 1.2rem;
+  margin-bottom: 1.2rem;
+  text-align: left;
+}
+
+.card-product-variant-select-wrapper {
+  margin-bottom: 1.2rem;
+}
+
+.card-product-variant-select-wrapper label {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.13rem;
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+.card-product-variant-select-wrapper select {
+  font-size: 1.3rem;
+  padding: 0.8rem 3.5rem 0.8rem 1.2rem;
+  width: 100%;
+}
+
+.card-product-variant-select-wrapper .select {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+

@@ -1438,3 +1438,116 @@ class CartPerformance {
     );
   }
 }
+
+class CardProductVariants extends HTMLElement {
+  constructor() {
+    super();
+    this.addEventListener('change', this.onOptionChange.bind(this));
+  }
+
+  connectedCallback() {
+    this.productCard = this.closest('.card-wrapper') || this.closest('.card') || this.closest('product-component');
+    this.productForm = this.productCard.querySelector('product-form');
+    this.variantIdInput = this.productForm ? this.productForm.querySelector('input[name="id"]') : null;
+    this.submitButton = this.productForm ? this.productForm.querySelector('[type="submit"]') : null;
+    this.submitButtonText = this.submitButton ? this.submitButton.querySelector('span') : null;
+    
+    // Parse variants JSON
+    const jsonScript = this.querySelector('.card-product-variants-json');
+    this.variants = jsonScript ? JSON.parse(jsonScript.textContent) : [];
+  }
+
+  onOptionChange() {
+    const selectedOptions = Array.from(this.querySelectorAll('.card-product__option-select')).map(select => select.value);
+    
+    // Find matching variant
+    const matchedVariant = this.variants.find(variant => {
+      return variant.options.every((option, index) => option === selectedOptions[index]);
+    });
+
+    if (matchedVariant) {
+      this.updateVariant(matchedVariant);
+    }
+  }
+
+  updateVariant(variant) {
+    // 1. Update the variant ID input in the product form
+    if (this.variantIdInput) {
+      this.variantIdInput.value = variant.id;
+      this.variantIdInput.disabled = false;
+    }
+
+    // 2. Update price in the product card
+    const priceContainer = this.productCard.querySelector('.price');
+    if (priceContainer) {
+      const regularPriceEl = priceContainer.querySelector('.price__regular .price-item--regular');
+      const salePriceEl = priceContainer.querySelector('.price__sale .price-item--sale');
+      const comparePriceEl = priceContainer.querySelector('.price__sale s.price-item--regular');
+      
+      const isOnSale = variant.compare_at_price && variant.compare_at_price !== variant.price;
+      
+      if (isOnSale) {
+        priceContainer.classList.add('price--on-sale');
+        if (salePriceEl) salePriceEl.textContent = variant.price;
+        if (comparePriceEl) comparePriceEl.textContent = variant.compare_at_price;
+      } else {
+        priceContainer.classList.remove('price--on-sale');
+        if (regularPriceEl) regularPriceEl.textContent = variant.price;
+      }
+      
+      if (!variant.available) {
+        priceContainer.classList.add('price--sold-out');
+      } else {
+        priceContainer.classList.remove('price--sold-out');
+      }
+    }
+
+    // 3. Update badges
+    const soldOutBadges = this.productCard.querySelectorAll('.card-badge-sold-out');
+    const onSaleBadges = this.productCard.querySelectorAll('.card-badge-on-sale');
+
+    soldOutBadges.forEach(badge => {
+      badge.classList.toggle('hidden', variant.available);
+    });
+
+    onSaleBadges.forEach(badge => {
+      const isVariantOnSale = variant.compare_at_price && variant.compare_at_price !== variant.price && variant.available;
+      badge.classList.toggle('hidden', !isVariantOnSale);
+    });
+
+    // 4. Update the submit button state
+    if (this.submitButton) {
+      if (variant.available) {
+        this.submitButton.removeAttribute('disabled');
+        this.submitButton.removeAttribute('aria-disabled');
+        if (this.submitButtonText) {
+          this.submitButtonText.textContent = window.variantStrings?.addToCart || 'Add to cart';
+        }
+        const soldOutMessage = this.submitButton.querySelector('.sold-out-message');
+        if (soldOutMessage) soldOutMessage.classList.add('hidden');
+        this.submitButtonText?.classList.remove('hidden');
+      } else {
+        this.submitButton.setAttribute('disabled', 'disabled');
+        this.submitButton.setAttribute('aria-disabled', 'true');
+        if (this.submitButtonText) {
+          this.submitButtonText.textContent = window.variantStrings?.soldOut || 'Sold out';
+        }
+        const soldOutMessage = this.submitButton.querySelector('.sold-out-message');
+        if (soldOutMessage) soldOutMessage.classList.remove('hidden');
+        this.submitButtonText?.classList.add('hidden');
+      }
+    }
+    
+    // 5. Update the card image if variant has a featured image
+    if (variant.featured_image) {
+      const cardImage = this.productCard.querySelector('.card__media img');
+      if (cardImage) {
+        cardImage.src = variant.featured_image;
+        cardImage.removeAttribute('srcset');
+      }
+    }
+  }
+}
+
+customElements.define('card-product-variants', CardProductVariants);
+

@@ -127,21 +127,18 @@
               </h3>
             </div>
             <div class="card__badge {{ settings.badge_position }}">
-              {%- if card_product.available == false -%}
-                <span
-                  id="NoMediaStandardBadge-{{ section_id }}-{{ card_product.id }}"
-                  class="badge badge--bottom-left color-{{ settings.sold_out_badge_color_scheme }}"
-                >
-                  {{- 'products.product.sold_out' | t -}}
-                </span>
-              {%- elsif card_product.compare_at_price > card_product.price and card_product.available -%}
-                <span
-                  id="NoMediaStandardBadge-{{ section_id }}-{{ card_product.id }}"
-                  class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}"
-                >
-                  {{- 'products.product.on_sale' | t -}}
-                </span>
-              {%- endif -%}
+              <span
+                id="NoMediaStandardBadge-{{ section_id }}-{{ card_product.id }}"
+                class="badge badge--bottom-left color-{{ settings.sold_out_badge_color_scheme }}{% if card_product.available %} hidden{% endif %} card-badge-sold-out"
+              >
+                {{- 'products.product.sold_out' | t -}}
+              </span>
+              <span
+                id="NoMediaStandardBadge-Sale-{{ section_id }}-{{ card_product.id }}"
+                class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}{% unless card_product.compare_at_price > card_product.price and card_product.available %} hidden{% endunless %} card-badge-on-sale"
+              >
+                {{- 'products.product.on_sale' | t -}}
+              </span>
             </div>
           </div>
         </div>
@@ -299,7 +296,113 @@
                   assign qty_rules = true
                 endif
               -%}
-              {%- if card_product.variants_count > 1 or qty_rules -%}
+              {%- if card_product.variants_count > 1 -%}
+                <product-form data-section-id="{{ section.id }}">
+                  {%- form 'product',
+                    card_product,
+                    id: product_form_id,
+                    class: 'form',
+                    novalidate: 'novalidate',
+                    data-type: 'add-to-cart-form'
+                  -%}
+                    <input
+                      type="hidden"
+                      name="id"
+                      value="{{ card_product.selected_or_first_available_variant.id }}"
+                      class="product-variant-id"
+                      {% if card_product.selected_or_first_available_variant.available == false %}
+                        disabled
+                      {% endif %}
+                    >
+
+                    <card-product-variants class="card-product-variants" data-product-id="{{ card_product.id }}">
+                      {%- for option in card_product.options_with_values -%}
+                        <div class="product-form__input product-form__input--dropdown card-product-variant-select-wrapper">
+                          <label class="form__label" for="Option-{{ section_id }}-{{ card_product.id }}-{{ forloop.index0 }}">
+                            {{ option.name }}
+                          </label>
+                          <div class="select">
+                            <select
+                              id="Option-{{ section_id }}-{{ card_product.id }}-{{ forloop.index0 }}"
+                              class="select__select card-product__option-select"
+                              name="options[{{ option.name | escape }}]"
+                            >
+                              {%- for value in option.values -%}
+                                  <option
+                                    value="{{ value | escape }}"
+                                    {% if option.selected_value == value %}
+                                      selected="selected"
+                                    {% endif %}
+                                  >
+                                    {{ value }}
+                                  </option>
+                              {%- endfor -%}
+                            </select>
+                            <span class="svg-wrapper">
+                              {{- 'icon-caret.svg' | inline_asset_content -}}
+                            </span>
+                          </div>
+                        </div>
+                      {%- endfor -%}
+
+                      <script type="application/json" class="card-product-variants-json">
+                        [
+                          {%- for variant in card_product.variants -%}
+                            {%- liquid
+                              if settings.currency_code_enabled
+                                assign variant_price = variant.price | money_with_currency
+                                assign variant_compare_at_price = variant.compare_at_price | money_with_currency
+                              else
+                                assign variant_price = variant.price | money
+                                assign variant_compare_at_price = variant.compare_at_price | money
+                              endif
+                            -%}
+                            {
+                              "id": {{ variant.id }},
+                              "options": {{ variant.options | json }},
+                              "available": {{ variant.available | json }},
+                              "price": {{ variant_price | json }},
+                              "compare_at_price": {% if variant.compare_at_price %}{{ variant_compare_at_price | json }}{% else %}null{% endif %},
+                              "featured_image": {% if variant.featured_media %}{{ variant.featured_media.src | image_url: width: 533 | json }}{% else %}null{% endif %}
+                            }{% unless forloop.last %},{% endunless %}
+                          {%- endfor -%}
+                        ]
+                      </script>
+                    </card-product-variants>
+
+                    <button
+                      id="{{ product_form_id }}-submit"
+                      type="submit"
+                      name="add"
+                      class="quick-add__submit button button--full-width button--secondary{% if horizontal_quick_add %} card--horizontal__quick-add{% endif %}"
+                      aria-haspopup="dialog"
+                      aria-labelledby="{{ product_form_id }}-submit title-{{ section_id }}-{{ card_product.id }}"
+                      aria-live="polite"
+                      data-sold-out-message="true"
+                      {% if card_product.selected_or_first_available_variant.available == false %}
+                        disabled
+                      {% endif %}
+                    >
+                      <span>
+                        {%- if card_product.selected_or_first_available_variant.available -%}
+                          {{ 'products.product.add_to_cart' | t }}
+                        {%- else -%}
+                          {{ 'products.product.sold_out' | t }}
+                        {%- endif -%}
+                      </span>
+                      <span class="sold-out-message hidden">
+                        {{ 'products.product.sold_out' | t }}
+                      </span>
+                      {%- if horizontal_quick_add -%}
+                        <span class="icon-wrap">
+                          {{- 'icon-plus.svg' | inline_asset_content -}}
+                        </span>
+                      {%- endif -%}
+                      {%- render 'loading-spinner' -%}
+                    </button>
+                  {%- endform -%}
+                </product-form>
+              {%- elsif qty_rules -%}
                 <modal-opener data-modal="#QuickAdd-{{ card_product.id }}">
                   <button
                     id="{{ product_form_id }}-submit"
@@ -551,21 +654,18 @@
             {% endif %}
           {% endif %}
           <div class="card__badge {{ settings.badge_position }}">
-            {%- if card_product.available == false -%}
-              <span
-                id="Badge-{{ section_id }}-{{ card_product.id }}"
-                class="badge badge--bottom-left color-{{ settings.sold_out_badge_color_scheme }}"
-              >
-                {{- 'products.product.sold_out' | t -}}
-              </span>
-            {%- elsif card_product.compare_at_price > card_product.price and card_product.available -%}
-              <span
-                id="Badge-{{ section_id }}-{{ card_product.id }}"
-                class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}"
-              >
-                {{- 'products.product.on_sale' | t -}}
-              </span>
-            {%- endif -%}
+            <span
+              id="Badge-{{ section_id }}-{{ card_product.id }}"
+              class="badge badge--bottom-left color-{{ settings.sold_out_badge_color_scheme }}{% if card_product.available %} hidden{% endif %} card-badge-sold-out"
+            >
+              {{- 'products.product.sold_out' | t -}}
+            </span>
+            <span
+              id="Badge-Sale-{{ section_id }}-{{ card_product.id }}"
+              class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}{% unless card_product.compare_at_price > card_product.price and card_product.available %} hidden{% endunless %} card-badge-on-sale"
+            >
+              {{- 'products.product.on_sale' | t -}}
+            </span>
           </div>
         </div>
       </div>
