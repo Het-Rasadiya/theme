@@ -317,11 +317,51 @@
 
                     <card-product-variants class="card-product-variants" data-product-id="{{ card_product.id }}">
                       {%- for option in card_product.options_with_values -%}
-                        <div class="product-form__input product-form__input--dropdown card-product-variant-select-wrapper">
-                          <label class="form__label" for="Option-{{ section_id }}-{{ card_product.id }}-{{ forloop.index0 }}">
-                            {{ option.name }}
+                        <div class="product-form__input card-product-variant-swatches-wrapper" data-option-index="{{ forloop.index0 }}">
+                          <label class="form__label">
+                            {{ option.name }}: <span class="selected-value-label">{{ option.selected_value }}</span>
                           </label>
-                          <div class="select">
+                          <div class="card-product-swatches">
+                            {%- for value in option.values -%}
+                              {%- liquid
+                                assign variant_image = null
+                                for variant in card_product.variants
+                                  if option.position == 1 and variant.option1 == value
+                                    if variant.featured_media != null
+                                      assign variant_image = variant.featured_media | image_url: width: 100
+                                      break
+                                    endif
+                                  elsif option.position == 2 and variant.option2 == value
+                                    if variant.featured_media != null
+                                      assign variant_image = variant.featured_media | image_url: width: 100
+                                      break
+                                    endif
+                                  elsif option.position == 3 and variant.option3 == value
+                                    if variant.featured_media != null
+                                      assign variant_image = variant.featured_media | image_url: width: 100
+                                      break
+                                    endif
+                                  endif
+                                endfor
+                              -%}
+                              
+                              <button
+                                type="button"
+                                class="card-product-swatch{% if option.selected_value == value %} is-active{% endif %}{% if variant_image == null %} card-product-swatch--text{% endif %}"
+                                data-value="{{ value | escape }}"
+                                aria-label="{{ value | escape }}"
+                                title="{{ value | escape }}"
+                              >
+                                {%- if variant_image != null -%}
+                                  <img src="{{ variant_image }}" alt="{{ value | escape }}" loading="lazy" width="40" height="40">
+                                {%- else -%}
+                                  <span class="swatch-text-only">{{ value }}</span>
+                                {%- endif -%}
+                              </button>
+                            {%- endfor -%}
+                          </div>
+
+                          <div class="select visually-hidden">
                             <select
                               id="Option-{{ section_id }}-{{ card_product.id }}-{{ forloop.index0 }}"
                               class="select__select card-product__option-select"

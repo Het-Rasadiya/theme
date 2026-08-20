@@ -1455,6 +1455,38 @@ class CardProductVariants extends HTMLElement {
     // Parse variants JSON
     const jsonScript = this.querySelector('.card-product-variants-json');
     this.variants = jsonScript ? JSON.parse(jsonScript.textContent) : [];
+
+    this.setupSwatches();
+  }
+
+  setupSwatches() {
+    const swatchesWrappers = this.querySelectorAll('.card-product-variant-swatches-wrapper');
+    swatchesWrappers.forEach(wrapper => {
+      const select = wrapper.querySelector('.card-product__option-select');
+      const swatches = wrapper.querySelectorAll('.card-product-swatch');
+      const labelValue = wrapper.querySelector('.selected-value-label');
+      
+      swatches.forEach(swatch => {
+        swatch.addEventListener('click', (e) => {
+          e.preventDefault();
+          const value = swatch.getAttribute('data-value');
+          if (select) {
+            select.value = value;
+            // Dispatch change event to trigger updateVariant
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+          
+          // Update active class
+          swatches.forEach(s => s.classList.remove('is-active'));
+          swatch.classList.add('is-active');
+          
+          // Update text label
+          if (labelValue) {
+            labelValue.textContent = value;
+          }
+        });
+      });
+    });
   }
 
   onOptionChange() {
