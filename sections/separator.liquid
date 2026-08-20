@@ -1,0 +1,123 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .separator-line {
+    border: none;
+    height: {{ section.settings.line_height }}px;
+    background-color: {% if section.settings.line_color != blank %}{{ section.settings.line_color }}{% else %}rgba(var(--color-foreground), 0.15){% endif %};
+    {%- if section.settings.width_type == 'custom' -%}
+      width: {{ section.settings.custom_width }}%;
+    {%- else -%}
+      width: 100%;
+    {%- endif -%}
+    margin: 0 auto;
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
+  <div class="{% if section.settings.width_type == 'page_width' %}page-width{% endif %}">
+    <hr class="separator-line" aria-hidden="true">
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Separator",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color",
+      "id": "line_color",
+      "label": "Line Color",
+      "info": "Leave blank to use theme default border color"
+    },
+    {
+      "type": "range",
+      "id": "line_height",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Line Thickness (Height)",
+      "default": 1
+    },
+    {
+      "type": "select",
+      "id": "width_type",
+      "label": "Line Width Type",
+      "options": [
+        {
+          "value": "full_width",
+          "label": "Full Screen Width"
+        },
+        {
+          "value": "page_width",
+          "label": "Page Width (Bounded)"
+        },
+        {
+          "value": "custom",
+          "label": "Custom Percentage"
+        }
+      ],
+      "default": "page_width"
+    },
+    {
+      "type": "range",
+      "id": "custom_width",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Custom Line Width",
+      "default": 50,
+      "info": "Only applies if 'Custom Percentage' is selected above."
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Separator"
+    }
+  ]
+}
+{% endschema %}
