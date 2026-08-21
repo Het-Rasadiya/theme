@@ -56,3 +56,52 @@
 .accordion__content img {
   max-width: 100%;
 }
+
+/* Custom Plus-Minus Icon for Accordions */
+.icon-plus-minus {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  align-self: center;
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+.icon-plus-minus::before,
+.icon-plus-minus::after {
+  content: "";
+  position: absolute;
+  background-color: currentColor;
+  transition: transform 0.25s ease-out, opacity 0.25s ease-out;
+}
+
+/* Horizontal line */
+.icon-plus-minus::before {
+  top: 6px;
+  left: 0;
+  width: 14px;
+  height: 2px;
+}
+
+/* Vertical line */
+.icon-plus-minus::after {
+  top: 0;
+  left: 6px;
+  width: 2px;
+  height: 14px;
+}
+
+/* Transform plus to minus when parent is open */
+details[open] .icon-plus-minus::after {
+  transform: rotate(90deg);
+  opacity: 0;
+}
+
+/* Accordion Title Uppercase Styling matching user screenshot */
+.product__accordion .accordion__title {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+  font-size: 1.4rem;
+}

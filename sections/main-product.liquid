@@ -194,9 +194,29 @@
                   </p>
                 {%- when 'description' -%}
                   {%- if product.description != blank -%}
-                    <div class="product__description rte quick-add-hidden" {{ block.shopify_attributes }}>
-                      {{ product.description }}
-                    </div>
+                    {%- if block.settings.make_collapsible -%}
+                      <div class="product__accordion accordion quick-add-hidden" {{ block.shopify_attributes }}>
+                        <details id="Details-{{ block.id }}-{{ section.id }}" {% if block.settings.open_by_default %}open{% endif %}>
+                          <summary>
+                            <div class="summary__title">
+                              {% render 'icon-accordion', icon: block.settings.icon %}
+                              <h2 class="h4 accordion__title inline-richtext">
+                                {%- assign description_title = 'products.product.description' | t -%}
+                                {{ block.settings.title | default: description_title }}
+                              </h2>
+                            </div>
+                            <span class="icon-plus-minus"></span>
+                          </summary>
+                          <div class="accordion__content rte" id="ProductAccordion-{{ block.id }}-{{ section.id }}">
+                            {{ product.description }}
+                          </div>
+                        </details>
+                      </div>
+                    {%- else -%}
+                      <div class="product__description rte quick-add-hidden" {{ block.shopify_attributes }}>
+                        {{ product.description }}
+                      </div>
+                    {%- endif -%}
                   {%- endif -%}
                 {%- when 'sku' -%}
                   <p
@@ -220,7 +240,7 @@
                             {{ block.settings.heading | default: block.settings.page.title | escape }}
                           </h2>
                         </div>
-                        {{- 'icon-caret.svg' | inline_asset_content -}}
+                        <span class="icon-plus-minus"></span>
                       </summary>
                       <div class="accordion__content rte" id="ProductAccordion-{{ block.id }}-{{ section.id }}">
                         {{ block.settings.content }}
@@ -228,6 +248,89 @@
                       </div>
                     </details>
                   </div>
+                {%- when 'safe_checkout' -%}
+                  {%- if block.settings.image != blank -%}
+                    <div class="product-safe-checkout-wrapper quick-add-hidden" {{ block.shopify_attributes }} style="margin-bottom: {{ block.settings.margin_bottom }}px;">
+                      <div class="product-safe-checkout-box" style="
+                        position: relative;
+                        border: 1px solid {{ block.settings.color_border }};
+                        border-radius: 8px;
+                        padding: {{ block.settings.padding_vertical }}px 20px 20px;
+                        text-align: center;
+                        background-color: {{ block.settings.color_bg }};
+                        box-sizing: border-box;
+                        margin-top: 15px;
+                      ">
+                        <div class="product-safe-checkout-title" style="
+                          position: absolute;
+                          top: 0;
+                          left: 50%;
+                          transform: translate(-50%, -50%);
+                          background-color: {{ block.settings.color_bg }};
+                          color: {{ block.settings.color_border }};
+                          font-weight: 500;
+                          font-size: 1.2rem;
+                          padding: 0 15px;
+                          text-transform: uppercase;
+                          letter-spacing: 0.15em;
+                          white-space: nowrap;
+                        ">
+                          {{ block.settings.title }}
+                        </div>
+                        <div class="product-safe-checkout__image-wrapper" style="
+                          display: flex;
+                          justify-content: center;
+                          align-items: center;
+                        ">
+                          <img
+                            src="{{ block.settings.image | image_url: width: block.settings.image_width }}"
+                            alt="{{ block.settings.title | escape }}"
+                            width="{{ block.settings.image_width }}"
+                            height="auto"
+                            loading="lazy"
+                            style="
+                              max-width: 100%;
+                              height: auto;
+                              display: block;
+                            "
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  {%- else -%}
+                    <div class="product-safe-checkout-wrapper quick-add-hidden" {{ block.shopify_attributes }} style="margin-bottom: {{ block.settings.margin_bottom }}px;">
+                      <div class="product-safe-checkout-box" style="
+                        position: relative;
+                        border: 1px dashed {{ block.settings.color_border }};
+                        border-radius: 8px;
+                        padding: {{ block.settings.padding_vertical }}px 20px 20px;
+                        text-align: center;
+                        background-color: {{ block.settings.color_bg }};
+                        box-sizing: border-box;
+                        margin-top: 15px;
+                      ">
+                        <div class="product-safe-checkout-title" style="
+                          position: absolute;
+                          top: 0;
+                          left: 50%;
+                          transform: translate(-50%, -50%);
+                          background-color: {{ block.settings.color_bg }};
+                          color: {{ block.settings.color_border }};
+                          font-weight: 500;
+                          font-size: 1.2rem;
+                          padding: 0 15px;
+                          text-transform: uppercase;
+                          letter-spacing: 0.15em;
+                          white-space: nowrap;
+                        ">
+                          {{ block.settings.title }}
+                        </div>
+                        <div style="color: {{ block.settings.color_border }}; opacity: 0.7; font-size: 1.2rem;">
+                          Upload a checkout badge image in block settings.
+                        </div>
+                      </div>
+                    </div>
+                  {%- endif -%}
                 {%- when 'quantity_selector' -%}
                   <div
                     id="Quantity-Form-{{ section.id }}"
@@ -972,7 +1075,270 @@
     {
       "type": "description",
       "name": "t:sections.main-product.blocks.description.name",
-      "limit": 1
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "make_collapsible",
+          "label": "Show description as collapsible tab",
+          "default": false
+        },
+        {
+          "type": "inline_richtext",
+          "id": "title",
+          "label": "Heading",
+          "default": "Description"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "options": [
+            {
+              "value": "none",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__1.label"
+            },
+            {
+              "value": "apple",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__2.label"
+            },
+            {
+              "value": "banana",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__3.label"
+            },
+            {
+              "value": "bottle",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__4.label"
+            },
+            {
+              "value": "box",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__5.label"
+            },
+            {
+              "value": "carrot",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__6.label"
+            },
+            {
+              "value": "chat_bubble",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__7.label"
+            },
+            {
+              "value": "check_mark",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__8.label"
+            },
+            {
+              "value": "clipboard",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__9.label"
+            },
+            {
+              "value": "dairy",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__10.label"
+            },
+            {
+              "value": "dairy_free",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__11.label"
+            },
+            {
+              "value": "dryer",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__12.label"
+            },
+            {
+              "value": "eye",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__13.label"
+            },
+            {
+              "value": "fire",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__14.label"
+            },
+            {
+              "value": "gluten_free",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__15.label"
+            },
+            {
+              "value": "heart",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__16.label"
+            },
+            {
+              "value": "iron",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__17.label"
+            },
+            {
+              "value": "leaf",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__18.label"
+            },
+            {
+              "value": "leather",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__19.label"
+            },
+            {
+              "value": "lightning_bolt",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__20.label"
+            },
+            {
+              "value": "lipstick",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__21.label"
+            },
+            {
+              "value": "lock",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__22.label"
+            },
+            {
+              "value": "map_pin",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__23.label"
+            },
+            {
+              "value": "nut_free",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__24.label"
+            },
+            {
+              "value": "pants",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__25.label"
+            },
+            {
+              "value": "paw_print",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__26.label"
+            },
+            {
+              "value": "pepper",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__27.label"
+            },
+            {
+              "value": "perfume",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__28.label"
+            },
+            {
+              "value": "plane",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__29.label"
+            },
+            {
+              "value": "plant",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__30.label"
+            },
+            {
+              "value": "price_tag",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__31.label"
+            },
+            {
+              "value": "question_mark",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__32.label"
+            },
+            {
+              "value": "recycle",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__33.label"
+            },
+            {
+              "value": "return",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__34.label"
+            },
+            {
+              "value": "ruler",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__35.label"
+            },
+            {
+              "value": "serving_dish",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__36.label"
+            },
+            {
+              "value": "shirt",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__37.label"
+            },
+            {
+              "value": "shoe",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__38.label"
+            },
+            {
+              "value": "silhouette",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__39.label"
+            },
+            {
+              "value": "snowflake",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__40.label"
+            },
+            {
+              "value": "star",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__41.label"
+            },
+            {
+              "value": "stopwatch",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__42.label"
+            },
+            {
+              "value": "truck",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__43.label"
+            },
+            {
+              "value": "washing",
+              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__44.label"
+            }
+          ],
+          "default": "none",
+          "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_by_default",
+          "label": "Open by default",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "safe_checkout",
+      "name": "Guaranteed Safe Checkout",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "GUARANTEE SAFE CHECKOUT"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Checkout Badge Image"
+        },
+        {
+          "type": "range",
+          "id": "image_width",
+          "min": 100,
+          "max": 600,
+          "step": 10,
+          "unit": "px",
+          "label": "Image Width",
+          "default": 350
+        },
+        {
+          "type": "color",
+          "id": "color_border",
+          "label": "Border & Title Color",
+          "default": "#8b0c22"
+        },
+        {
+          "type": "color",
+          "id": "color_bg",
+          "label": "Box Background Color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "range",
+          "id": "padding_vertical",
+          "min": 10,
+          "max": 50,
+          "step": 2,
+          "unit": "px",
+          "label": "Box Inner Padding Vertical",
+          "default": 20
+        },
+        {
+          "type": "range",
+          "id": "margin_bottom",
+          "min": 0,
+          "max": 100,
+          "step": 4,
+          "unit": "px",
+          "label": "Margin Bottom",
+          "default": 20
+        }
+      ]
     },
     {
       "type": "share",
