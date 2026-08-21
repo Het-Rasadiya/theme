@@ -38,6 +38,10 @@
 
   /* Fallback alignment for mobile scroll so it doesn't clip content */
   @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} {
+      --circle-size: {{ section.settings.circle_size_mobile }}px;
+      --circle-gap: {{ section.settings.gap_mobile }}px;
+    }
     #shopify-section-{{ section.id }} .circle-menu-container {
       justify-content: flex-start;
       padding-left: 1.5rem;
@@ -177,6 +181,16 @@
     },
     {
       "type": "range",
+      "id": "circle_size_mobile",
+      "min": 40,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Circle Size on Mobile (Diameter)",
+      "default": 80
+    },
+    {
+      "type": "range",
       "id": "gap",
       "min": 10,
       "max": 80,
@@ -184,6 +198,16 @@
       "unit": "px",
       "label": "Gap between items",
       "default": 20
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "min": 5,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Gap between items on Mobile",
+      "default": 15
     },
     {
       "type": "select",
