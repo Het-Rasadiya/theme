@@ -331,6 +331,110 @@
                       </div>
                     </div>
                   {%- endif -%}
+                {%- when 'product_highlights' -%}
+                  <div class="product-highlights-wrapper quick-add-hidden" {{ block.shopify_attributes }} style="margin-bottom: {{ block.settings.margin_bottom }}px; color: {{ block.settings.color | default: 'currentColor' }}; font-family: inherit; font-size: 1.4rem; font-weight: 400; line-height: 1.4; margin-top: 15px;">
+                    <!-- Row 1: Two Columns -->
+                    <div class="product-highlights-row product-highlights-row--two-col" style="display: flex; flex-wrap: wrap; margin-bottom: 12px; gap: 15px;">
+                      {%- if block.settings.text_1 != blank -%}
+                        <div class="product-highlight-item" style="display: flex; align-items: center; gap: 8px; flex: 1 1 200px;">
+                          <span class="product-highlight-icon" style="display: inline-flex; align-items: center; flex-shrink: 0; color: {{ block.settings.color | default: 'currentColor' }};">
+                            {%- case block.settings.icon_1 -%}
+                              {%- when 'shield' -%}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px;">
+                                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                  <path d="M12 2v20"/>
+                                  <path d="M4 12h16"/>
+                                </svg>
+                              {%- when 'return' -%}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px;">
+                                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                                  <path d="M3 3v5h5"/>
+                                </svg>
+                              {%- when 'truck' -%}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px;">
+                                  <rect x="1" y="3" width="15" height="13" rx="2" ry="2"/>
+                                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                                  <circle cx="5.5" cy="18.5" r="2.5"/>
+                                  <circle cx="18.5" cy="18.5" r="2.5"/>
+                                </svg>
+                              {%- when 'custom' -%}
+                                {%- if block.settings.custom_icon_1 != blank -%}
+                                  <img src="{{ block.settings.custom_icon_1 | image_url: width: 44 }}" alt="" width="22" height="22" loading="lazy" style="object-fit: contain;">
+                                {%- endif -%}
+                            {%- endcase -%}
+                          </span>
+                          <span class="product-highlight-text" style="font-size: 1.35rem;">{{ block.settings.text_1 }}</span>
+                        </div>
+                      {%- endif -%}
+
+                      {%- if block.settings.text_2 != blank -%}
+                        <div class="product-highlight-item" style="display: flex; align-items: center; gap: 8px; flex: 1 1 200px;">
+                          <span class="product-highlight-icon" style="display: inline-flex; align-items: center; flex-shrink: 0; color: {{ block.settings.color | default: 'currentColor' }};">
+                            {%- case block.settings.icon_2 -%}
+                              {%- when 'shield' -%}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px;">
+                                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                  <path d="M12 2v20"/>
+                                  <path d="M4 12h16"/>
+                                </svg>
+                              {%- when 'return' -%}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px;">
+                                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                                  <path d="M3 3v5h5"/>
+                                </svg>
+                              {%- when 'truck' -%}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px;">
+                                  <rect x="1" y="3" width="15" height="13" rx="2" ry="2"/>
+                                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                                  <circle cx="5.5" cy="18.5" r="2.5"/>
+                                  <circle cx="18.5" cy="18.5" r="2.5"/>
+                                </svg>
+                              {%- when 'custom' -%}
+                                {%- if block.settings.custom_icon_2 != blank -%}
+                                  <img src="{{ block.settings.custom_icon_2 | image_url: width: 44 }}" alt="" width="22" height="22" loading="lazy" style="object-fit: contain;">
+                                {%- endif -%}
+                            {%- endcase -%}
+                          </span>
+                          <span class="product-highlight-text" style="font-size: 1.35rem;">{{ block.settings.text_2 }}</span>
+                        </div>
+                      {%- endif -%}
+                    </div>
+
+                    <!-- Row 2: Full Width Column -->
+                    {%- if block.settings.text_3 != blank -%}
+                      <div class="product-highlights-row" style="display: flex;">
+                        <div class="product-highlight-item" style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                          <span class="product-highlight-icon" style="display: inline-flex; align-items: center; flex-shrink: 0; color: {{ block.settings.color | default: 'currentColor' }};">
+                            {%- case block.settings.icon_3 -%}
+                              {%- when 'shield' -%}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px;">
+                                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                  <path d="M12 2v20"/>
+                                  <path d="M4 12h16"/>
+                                </svg>
+                              {%- when 'return' -%}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px;">
+                                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                                  <path d="M3 3v5h5"/>
+                                </svg>
+                              {%- when 'truck' -%}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px;">
+                                  <rect x="1" y="3" width="15" height="13" rx="2" ry="2"/>
+                                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                                  <circle cx="5.5" cy="18.5" r="2.5"/>
+                                  <circle cx="18.5" cy="18.5" r="2.5"/>
+                                </svg>
+                              {%- when 'custom' -%}
+                                {%- if block.settings.custom_icon_3 != blank -%}
+                                  <img src="{{ block.settings.custom_icon_3 | image_url: width: 44 }}" alt="" width="22" height="22" loading="lazy" style="object-fit: contain;">
+                                {%- endif -%}
+                            {%- endcase -%}
+                          </span>
+                          <span class="product-highlight-text" style="font-size: 1.35rem;">{{ block.settings.text_3 }}</span>
+                        </div>
+                      </div>
+                    {%- endif -%}
+                  </div>
                 {%- when 'quantity_selector' -%}
                   <div
                     id="Quantity-Form-{{ section.id }}"
@@ -1327,6 +1431,116 @@
           "unit": "px",
           "label": "Box Inner Padding Vertical",
           "default": 20
+        },
+        {
+          "type": "range",
+          "id": "margin_bottom",
+          "min": 0,
+          "max": 100,
+          "step": 4,
+          "unit": "px",
+          "label": "Margin Bottom",
+          "default": 20
+        }
+      ]
+    },
+    {
+      "type": "product_highlights",
+      "name": "Product Highlights",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Highlight 1"
+        },
+        {
+          "type": "select",
+          "id": "icon_1",
+          "label": "Icon 1",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "shield", "label": "Shield (Quality)" },
+            { "value": "return", "label": "Return Arrow" },
+            { "value": "truck", "label": "Truck (Delivery)" },
+            { "value": "custom", "label": "Custom Icon" }
+          ],
+          "default": "shield"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon_1",
+          "label": "Custom Icon 1"
+        },
+        {
+          "type": "text",
+          "id": "text_1",
+          "label": "Text 1",
+          "default": "Authentic & Quality Assured"
+        },
+        {
+          "type": "header",
+          "content": "Highlight 2"
+        },
+        {
+          "type": "select",
+          "id": "icon_2",
+          "label": "Icon 2",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "shield", "label": "Shield (Quality)" },
+            { "value": "return", "label": "Return Arrow" },
+            { "value": "truck", "label": "Truck (Delivery)" },
+            { "value": "custom", "label": "Custom Icon" }
+          ],
+          "default": "return"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon_2",
+          "label": "Custom Icon 2"
+        },
+        {
+          "type": "text",
+          "id": "text_2",
+          "label": "Text 2",
+          "default": "7 Days Return & Exchange"
+        },
+        {
+          "type": "header",
+          "content": "Highlight 3"
+        },
+        {
+          "type": "select",
+          "id": "icon_3",
+          "label": "Icon 3",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "shield", "label": "Shield (Quality)" },
+            { "value": "return", "label": "Return Arrow" },
+            { "value": "truck", "label": "Truck (Delivery)" },
+            { "value": "custom", "label": "Custom Icon" }
+          ],
+          "default": "truck"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon_3",
+          "label": "Custom Icon 3"
+        },
+        {
+          "type": "text",
+          "id": "text_3",
+          "label": "Text 3",
+          "default": "Free Delivery, COD (Cash on delivery) Available"
+        },
+        {
+          "type": "header",
+          "content": "Styling & Layout"
+        },
+        {
+          "type": "color",
+          "id": "color",
+          "label": "Text & Icon Color",
+          "default": "#8b0c22"
         },
         {
           "type": "range",
